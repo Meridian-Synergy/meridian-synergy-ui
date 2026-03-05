@@ -1,4 +1,5 @@
-# CLAUDE.md — Meridian Synergy UI
+# CLAUDE.md — meridian-synergy-ui
+## Design System partagé — @meridian-synergy/ui
 
 Ce fichier est lu automatiquement par Claude Code à chaque session.
 Il contient tout le contexte nécessaire pour contribuer au Design System de Meridian Synergy.
@@ -9,8 +10,30 @@ Il contient tout le contexte nécessaire pour contribuer au Design System de Mer
 
 **Meridian Synergy** — Plateforme SaaS dans le domaine du drone professionnel.
 Ce repo (`meridian-synergy-ui`) est le **Design System partagé** entre :
-- Le site vitrine statique (Nuxt 3 SSG → GitHub Pages)
-- Le portail SaaS télépilote (Nuxt 3 SPA → app.meridian-synergy.com)
+- Le site vitrine statique (`meridian-synergy-web` → meridian-synergy.com)
+- Le portail SaaS télépilote (`meridian-synergy-app` → app.meridian-synergy.com)
+
+---
+
+## Ce repo EST la source de vérité des composants
+
+**RÈGLE ABSOLUE : tous les composants UI visuels sont créés ICI et uniquement ici.**
+Les repos `meridian-synergy-web` et `meridian-synergy-app` n'ont JAMAIS de composants UI locaux — ils importent uniquement depuis `@meridian-synergy/ui`.
+
+### Chaîne de dépendance
+
+```
+meridian-synergy-ui  ──→  meridian-synergy-web  (site vitrine)
+@meridian-synergy/ui ──→  meridian-synergy-app  (portail SaaS)
+```
+
+### Workflow quand un composant manque dans web ou app
+
+1. Créer le composant ici dans `src/components/`
+2. Ajouter sa story Storybook (light + dark)
+3. Exporter dans `src/index.ts`
+4. Publier une nouvelle version (`npm version patch` + push tag)
+5. Mettre à jour dans web/app : `pnpm update @meridian-synergy/ui`
 
 ---
 
@@ -25,7 +48,7 @@ Ce repo (`meridian-synergy-ui`) est le **Design System partagé** entre :
 | Package manager | pnpm 10 |
 | Tests | Vitest |
 | CI/CD | GitHub Actions |
-| Déploiement Storybook | GitHub Pages (`gh-pages` branch) |
+| Déploiement Storybook | GitHub Pages (branche `gh-pages`) |
 | Publication package | GitHub Packages (`@meridian-synergy/ui`) |
 
 ---
@@ -96,7 +119,8 @@ meridian-synergy-ui/
 │   └── index.ts                 ← point d'entrée du package (exports)
 ├── package.json
 ├── tsconfig.json
-└── vite.config.ts
+├── vite.config.ts
+└── CLAUDE.md
 ```
 
 ---
@@ -112,14 +136,12 @@ meridian-synergy-ui/
 
 ```vue
 <script setup lang="ts">
-// 1. withDefaults + defineProps en premier
 withDefaults(defineProps<{
   // props typées ici
 }>(), {
   // valeurs par défaut ici
 })
 
-// 2. emits
 const emit = defineEmits<{ ... }>()
 </script>
 
@@ -129,7 +151,7 @@ const emit = defineEmits<{ ... }>()
 
 <style scoped>
 /* Toujours scoped */
-/* Toujours utiliser les variables CSS tokens */
+/* Toujours utiliser les variables CSS tokens — jamais de valeurs en dur */
 /* Pattern classes : .ms-[composant]--[modifier] */
 </style>
 ```
@@ -151,11 +173,16 @@ export default meta
 type Story = StoryObj<typeof MsXxx>
 
 export const Default: Story = { args: { /* ... */ } }
+// Toujours ajouter une story Light ET une story Dark
+export const Dark: Story = {
+  args: { /* ... */ },
+  parameters: { backgrounds: { default: 'dark' } }
+}
 ```
 
 ### Export dans `src/index.ts`
 
-Chaque nouveau composant doit être ajouté à `src/index.ts` :
+Chaque nouveau composant doit être ajouté :
 ```typescript
 export { default as MsButton } from './components/MsButton/MsButton.vue'
 export { default as MsInput }  from './components/MsInput/MsInput.vue'
@@ -180,47 +207,52 @@ export { default as MsInput }  from './components/MsInput/MsInput.vue'
 | 2 | `MsCard` | Carte contenu avec slot header/body/footer |
 | 3 | `MsBadge` | Étiquette statut (actif, inactif, en cours, alerte) |
 | 4 | `MsNavBar` | Navigation principale, responsive, dark/light |
-| 5 | `MsLogo` | Composant SVG logo avec variants (horizontal, icon, white) |
+| 5 | `MsLogo` | Composant SVG logo — variants horizontal, icon-only, white |
 | 6 | `MsModal` | Modale avec overlay et slot contenu |
 | 7 | `MsAlert` | Bandeau notification (info, success, warning, error) |
+
+---
+
+## Storybook
+
+Chaque composant doit être testé sur les deux backgrounds :
+- `light` (#FFFFFF) — pour le site vitrine
+- `dark` (#10192C) — pour le portail SaaS
+
+URL Storybook public : https://meridian-synergy.github.io/meridian-synergy-ui
 
 ---
 
 ## Commandes utiles
 
 ```bash
-pnpm storybook          # Lancer Storybook en dev → localhost:6006
-pnpm build-storybook    # Build statique Storybook
-pnpm build              # Build du package pour distribution
+pnpm storybook          # Dev → localhost:6006
+pnpm build-storybook    # Build statique
+pnpm build              # Build package pour distribution
 ```
 
 ---
 
 ## CI/CD
 
-Chaque `git push` sur `main` déclenche automatiquement :
-1. Build Storybook (`pnpm build-storybook`)
-2. Deploy sur GitHub Pages → https://meridian-synergy.github.io/meridian-synergy-ui
+Push sur `main` → GitHub Actions → build Storybook → deploy GitHub Pages.
 
 ---
 
-## Contexte métier (important pour les composants SaaS)
+## Contexte métier
 
-Le portail SaaS est destiné aux **télépilotes de drones professionnels**. Les modules clés :
-- **SORA** — analyse de risque réglementaire (agent IA avec review humaine obligatoire)
-- **MANEX** — génération Manuel d'Exploitation (agent IA avec review humaine obligatoire)
+Le portail SaaS est destiné aux **télépilotes de drones professionnels**. Modules clés :
+- **SORA** — analyse de risque réglementaire (agent IA + review humaine obligatoire)
+- **MANEX** — génération Manuel d'Exploitation (agent IA + review humaine obligatoire)
 - **Planning missions** — calendrier, zones de vol, checklist pré-vol
-- **Suivi clients** — gestion portefeuille clients et devis
-
-Les composants UI doivent supporter le **dark mode** (portail SaaS) et le **light mode** (vitrine).
-Toujours tester les deux backgrounds dans Storybook.
+- **Suivi clients** — portefeuille clients et devis
 
 ---
 
 ## Variables d'environnement (ne jamais commiter)
 
 ```
-ANTHROPIC_API_KEY=     ← Claude API pour les agents IA (backend uniquement)
-SUPABASE_URL=          ← Supabase project URL
-SUPABASE_ANON_KEY=     ← Supabase anon key
+ANTHROPIC_API_KEY=     ← Claude API (backend uniquement)
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
 ```
