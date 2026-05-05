@@ -1,10 +1,6 @@
-# CLAUDE.md — meridian-synergy-ui
-## Design System partagé — @meridian-synergy/ui
+# CLAUDE.md
 
-Ce fichier est lu automatiquement par Claude Code à chaque session.
-Il contient tout le contexte nécessaire pour contribuer au Design System de Meridian Synergy.
-
----
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Projet
 
@@ -15,17 +11,10 @@ Ce repo (`meridian-synergy-ui`) est le **Design System partagé** entre :
 
 ---
 
-## Ce repo EST la source de vérité des composants
+## Règle absolue : source de vérité des composants
 
-**RÈGLE ABSOLUE : tous les composants UI visuels sont créés ICI et uniquement ici.**
-Les repos `meridian-synergy-web` et `meridian-synergy-app` n'ont JAMAIS de composants UI locaux — ils importent uniquement depuis `@meridian-synergy/ui`.
-
-### Chaîne de dépendance
-
-```
-meridian-synergy-ui  ──→  meridian-synergy-web  (site vitrine)
-@meridian-synergy/ui ──→  meridian-synergy-app  (portail SaaS)
-```
+Tous les composants UI visuels sont créés **ici uniquement**.
+Les repos `meridian-synergy-web` et `meridian-synergy-app` n'ont jamais de composants UI locaux — ils importent uniquement depuis `@meridian-synergy/ui`.
 
 ### Workflow quand un composant manque dans web ou app
 
@@ -46,81 +35,85 @@ meridian-synergy-ui  ──→  meridian-synergy-web  (site vitrine)
 | Documentation | Storybook 10 |
 | Langage | TypeScript strict |
 | Package manager | pnpm 10 |
-| Tests | Vitest |
-| CI/CD | GitHub Actions |
-| Déploiement Storybook | GitHub Pages (branche `gh-pages`) |
+| Tests | Vitest + `@storybook/addon-vitest` (Playwright/Chromium) |
+| CI/CD | GitHub Actions → GitHub Pages (`gh-pages`) |
 | Publication package | GitHub Packages (`@meridian-synergy/ui`) |
+
+---
+
+## Commandes
+
+```bash
+pnpm storybook          # Dev → localhost:6006
+pnpm build-storybook    # Build statique
+pnpm build              # Build package pour distribution
+pnpm vitest             # Tests (stories via addon-vitest + Playwright headless)
+```
+
+Les tests tournent en mode browser (Chromium headless) via `vitest.config.ts` qui charge `@storybook/addon-vitest`. Il n'y a pas de commande `pnpm test` fonctionnelle — utiliser `pnpm vitest`.
 
 ---
 
 ## Design System — Tokens
 
-Les tokens sont définis dans `src/tokens/tokens.css` et importés globalement.
-Ne jamais utiliser de couleurs ou espacements en dur — toujours utiliser les variables CSS.
+Les tokens sont définis dans `src/tokens/tokens.css` et importés globalement via `.storybook/preview.ts`.
+**Ne jamais utiliser de valeurs en dur** — toujours utiliser les variables CSS.
 
-### Couleurs
+### Couleurs principales
 
 ```css
---ms-color-navy:    #1B2B56   /* Primaire — fond navbar, titres, boutons primary */
---ms-color-silver:  #7A7D8A   /* Secondaire — textes secondaires, bordures */
---ms-color-sky:     #00AAEF   /* Accent énergie — liens, highlights, icônes actives */
---ms-color-orange:  #F05A28   /* CTA critiques — boutons d'action principale */
---ms-color-white:   #FFFFFF   /* Fond light mode */
---ms-color-dark-bg: #10192C   /* Fond dark mode (portail SaaS) */
+--ms-color-navy:    #1B2B56   /* Primaire — navbar, titres, boutons primary */
+--ms-color-sky:     #00AAEF   /* Accent énergie — liens, états actifs */
+--ms-color-gold:    #C9A84C   /* CTA — conversion, invitation à agir */
+--ms-color-orange:  #F05A28   /* Actions critiques — destructif, danger, suppression */
+--ms-color-silver:  #7A7D8A   /* Secondaire — textes, bordures, placeholders */
+--ms-color-white:   #FFFFFF   /* Surfaces light mode */
+```
+
+### Couleurs étendues
+
+```css
+--ms-color-dark-bg:  #10192C   /* Fond dark mode (portail SaaS) */
+--ms-color-dark-bg2: #182236   /* Fond dark mode — couche secondaire */
+--ms-color-bg:       #ECEEF3   /* Fond page light mode */
+--ms-color-border:   #D5D9E4   /* Bordures standard */
+--ms-color-muted:    #8C95AA   /* Labels désactivés, méta-texte */
+--ms-color-success:  #22c55e
+--ms-color-warning:  #f59e0b
+--ms-color-error:    #ef4444
 ```
 
 ### Typographie
 
 ```css
---ms-font-display:  'Exo 2', sans-serif      /* Titres, headings, logo */
---ms-font-body:     'DM Sans', sans-serif    /* Corps de texte, labels, boutons */
---ms-font-data:     'Space Mono', monospace  /* Données, codes, coordonnées GPS */
+--ms-font-display:   'Barlow', sans-serif;           /* Titres, headings, hero — 700/600 */
+--ms-font-body:      'Barlow', sans-serif;           /* Corps, boutons, labels — 400/600 */
+--ms-font-condensed: 'Barlow Condensed', sans-serif; /* Section labels, tags uppercase */
+--ms-font-data:      'Space Mono', monospace;        /* Données, GPS, codes, nombres */
 ```
+
+Les polices sont chargées depuis Google Fonts dans `.storybook/preview.ts` (Storybook uniquement). Les apps consommatrices doivent les charger elles-mêmes.
 
 ### Espacement
 
 ```css
---ms-space-xs: 4px
---ms-space-sm: 8px
---ms-space-md: 16px
---ms-space-lg: 24px
---ms-space-xl: 40px
+--ms-space-xs: 4px  |  --ms-space-sm: 8px  |  --ms-space-md: 16px
+--ms-space-lg: 24px |  --ms-space-xl: 40px |  --ms-space-2xl: 56px
 ```
 
 ### Border radius
 
 ```css
---ms-radius-sm: 4px
---ms-radius-md: 8px
---ms-radius-lg: 16px
+--ms-radius-sm: 4px  |  --ms-radius-md: 8px   |  --ms-radius-lg: 16px
+--ms-radius-xl: 20px |  --ms-radius-full: 9999px
 ```
 
----
+### Ombres & Transitions
 
-## Structure du repo
-
-```
-meridian-synergy-ui/
-├── .github/
-│   └── workflows/
-│       └── storybook.yml        ← CI/CD deploy Storybook sur gh-pages
-├── .storybook/
-│   ├── main.ts                  ← config Storybook (stories: src/**)
-│   └── preview.ts               ← import tokens globaux + backgrounds
-├── src/
-│   ├── tokens/
-│   │   └── tokens.css           ← design tokens CSS custom properties
-│   ├── components/
-│   │   └── [NomComposant]/
-│   │       ├── [Nom].vue        ← composant Vue 3
-│   │       ├── [Nom].stories.ts ← stories Storybook
-│   │       └── index.ts         ← export du composant
-│   ├── vite-env.d.ts            ← déclarations types .vue
-│   └── index.ts                 ← point d'entrée du package (exports)
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── CLAUDE.md
+```css
+--ms-shadow-xs / sm / md / lg        /* Ombres navy avec opacité */
+--ms-transition-fast: 0.1s ease      /* Micro-interactions */
+--ms-transition-base: 0.2s ease      /* Transitions standard */
 ```
 
 ---
@@ -131,6 +124,7 @@ meridian-synergy-ui/
 - Préfixe `Ms` obligatoire : `MsButton`, `MsInput`, `MsCard`, `MsNavBar`
 - Un dossier par composant dans `src/components/`
 - Fichier Vue en PascalCase : `MsButton.vue`
+- Classes CSS : `.ms-[composant]--[modifier]`
 
 ### Structure d'un composant Vue
 
@@ -150,9 +144,7 @@ const emit = defineEmits<{ ... }>()
 </template>
 
 <style scoped>
-/* Toujours scoped */
-/* Toujours utiliser les variables CSS tokens — jamais de valeurs en dur */
-/* Pattern classes : .ms-[composant]--[modifier] */
+/* Toujours scoped — toujours des variables CSS tokens */
 </style>
 ```
 
@@ -173,19 +165,17 @@ export default meta
 type Story = StoryObj<typeof MsXxx>
 
 export const Default: Story = { args: { /* ... */ } }
-// Toujours ajouter une story Light ET une story Dark
+// Toujours ajouter une story Dark avec background explicite
 export const Dark: Story = {
   args: { /* ... */ },
-  parameters: { backgrounds: { default: 'dark' } }
+  parameters: { backgrounds: { default: 'dark' } },
 }
 ```
 
 ### Export dans `src/index.ts`
 
-Chaque nouveau composant doit être ajouté :
 ```typescript
 export { default as MsButton } from './components/MsButton/MsButton.vue'
-export { default as MsInput }  from './components/MsInput/MsInput.vue'
 // etc.
 ```
 
@@ -193,49 +183,41 @@ export { default as MsInput }  from './components/MsInput/MsInput.vue'
 
 ## Composants existants
 
-| Composant | Statut | Variants |
+| Composant | Variants / Props notables | Stories |
 |---|---|---|
-| `MsButton` | ✅ Done | `primary`, `secondary`, `cta` / `sm`, `md`, `lg` |
+| `MsButton` | `primary`, `secondary`, `cta`, `critical` / `sm`, `md`, `lg` | ✅ |
+| `MsInput` | `modelValue`, `label`, `placeholder`, `hint`, `error`, `disabled`, `type` | ✅ |
+| `MsBadge` | `active`, `inactive`, `pending`, `alert`, `warning`, `navy`, `sky`, `orange` / `dot` | ✅ |
+| `MsAlert` | `info`, `success`, `warning`, `error`, `navy` / `title`, `action` | ❌ à créer |
+| `MsCard` | slots header/body/footer | ❌ à créer |
+| `MsModal` | slot contenu, overlay | ❌ à créer |
 
 ---
 
-## Composants à créer (backlog prioritaire)
+## Backlog prioritaire
 
 | Priorité | Composant | Description |
 |---|---|---|
-| 1 | `MsInput` | Champ texte avec label, placeholder, état error/disabled |
-| 2 | `MsCard` | Carte contenu avec slot header/body/footer |
-| 3 | `MsBadge` | Étiquette statut (actif, inactif, en cours, alerte) |
-| 4 | `MsNavBar` | Navigation principale, responsive, dark/light |
-| 5 | `MsLogo` | Composant SVG logo — variants horizontal, icon-only, white |
-| 6 | `MsModal` | Modale avec overlay et slot contenu |
-| 7 | `MsAlert` | Bandeau notification (info, success, warning, error) |
+| 1 | `MsNavBar` | Navigation principale, responsive, dark/light |
+| 2 | `MsLogo` | SVG logo — variants horizontal, icon-only, white |
+| 3 | Stories manquantes | MsAlert, MsCard, MsModal n'ont pas de stories |
 
 ---
 
 ## Storybook
 
-Chaque composant doit être testé sur les deux backgrounds :
-- `light` (#FFFFFF) — pour le site vitrine
-- `dark` (#10192C) — pour le portail SaaS
+Storybook ne scanne que `src/**/*.stories.@(ts|tsx)` (voir `.storybook/main.ts`).
+Le dossier `stories-example/` contient les exemples par défaut de Storybook — ne pas s'en inspirer pour les composants du DS.
 
-URL Storybook public : https://meridian-synergy.github.io/meridian-synergy-ui
+Backgrounds disponibles : `light` (#FFFFFF), `dark` (#10192C), `navy` (#1B2B56).
 
----
-
-## Commandes utiles
-
-```bash
-pnpm storybook          # Dev → localhost:6006
-pnpm build-storybook    # Build statique
-pnpm build              # Build package pour distribution
-```
+URL public : https://meridian-synergy.github.io/meridian-synergy-ui
 
 ---
 
 ## CI/CD
 
-Push sur `main` → GitHub Actions → build Storybook → deploy GitHub Pages.
+Push sur `main` → GitHub Actions (`storybook.yml`) → build Storybook → deploy GitHub Pages.
 
 ---
 
@@ -246,13 +228,3 @@ Le portail SaaS est destiné aux **télépilotes de drones professionnels**. Mod
 - **MANEX** — génération Manuel d'Exploitation (agent IA + review humaine obligatoire)
 - **Planning missions** — calendrier, zones de vol, checklist pré-vol
 - **Suivi clients** — portefeuille clients et devis
-
----
-
-## Variables d'environnement (ne jamais commiter)
-
-```
-ANTHROPIC_API_KEY=     ← Claude API (backend uniquement)
-SUPABASE_URL=
-SUPABASE_ANON_KEY=
-```
