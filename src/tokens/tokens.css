@@ -1,18 +1,31 @@
 :root {
   /* === Colors === */
-  --ms-color-navy:   #1B2B56;
-  --ms-color-silver: #7A7D8A;
-  --ms-color-sky:    #00AAEF;
-  --ms-color-orange: #F05A28;
-  --ms-color-white:  #FFFFFF;
+  --ms-color-navy:     #1B2B56;   /* Primary — navbars, headings, primary buttons */
+  --ms-color-sky:      #00AAEF;   /* Energy accent — links, active states, highlights */
+  --ms-color-orange:   #F05A28;   /* Critical actions — destructive, danger, delete */
+  --ms-color-gold:     #C9A84C;   /* CTA — conversion, invitation to act */
+  --ms-color-silver:   #7A7D8A;   /* Secondary — body text, borders, placeholders */
+  --ms-color-white:    #FFFFFF;   /* Light mode surfaces */
 
   /* Dark mode base (portail SaaS) */
-  --ms-color-dark-bg: #10192C;
+  --ms-color-dark-bg:  #10192C;
+  --ms-color-dark-bg2: #182236;
+
+  /* Extended surface tokens */
+  --ms-color-bg:       #ECEEF3;   /* Page background light mode */
+  --ms-color-border:   #D5D9E4;   /* Standard border */
+  --ms-color-muted:    #8C95AA;   /* Muted labels, meta text */
+
+  /* Status */
+  --ms-color-success:  #22c55e;
+  --ms-color-warning:  #f59e0b;
+  --ms-color-error:    #ef4444;
 
   /* === Typography === */
-  --ms-font-display: 'Exo 2', sans-serif;
-  --ms-font-body:    'DM Sans', sans-serif;
-  --ms-font-data:    'Space Mono', monospace;
+  --ms-font-display:   'Barlow', sans-serif;           /* Headings, titles, hero — Bold 700 / SemiBold 600 */
+  --ms-font-body:      'Barlow', sans-serif;           /* Body text, buttons, labels — Regular 400 / SemiBold 600 */
+  --ms-font-condensed: 'Barlow Condensed', sans-serif; /* Section labels, tags, uppercase meta — Medium 500 */
+  --ms-font-data:      'Space Mono', monospace;        /* Data, GPS coords, codes, numbers */
 
   /* === Spacing === */
   --ms-space-xs:  4px;
@@ -20,9 +33,22 @@
   --ms-space-md:  16px;
   --ms-space-lg:  24px;
   --ms-space-xl:  40px;
+  --ms-space-2xl: 56px;
 
   /* === Border radius === */
-  --ms-radius-sm: 4px;
-  --ms-radius-md: 8px;
-  --ms-radius-lg: 16px;
+  --ms-radius-sm:   4px;
+  --ms-radius-md:   8px;
+  --ms-radius-lg:   16px;
+  --ms-radius-xl:   20px;
+  --ms-radius-full: 9999px;
+
+  /* === Shadows === */
+  --ms-shadow-xs: 0 1px 4px rgba(27, 43, 86, 0.05);
+  --ms-shadow-sm: 0 2px 12px rgba(27, 43, 86, 0.06);
+  --ms-shadow-md: 0 4px 24px rgba(27, 43, 86, 0.10);
+  --ms-shadow-lg: 0 8px 40px rgba(27, 43, 86, 0.14);
+
+  /* === Transitions === */
+  --ms-transition-fast: 0.1s ease;
+  --ms-transition-base: 0.2s ease;
 }
