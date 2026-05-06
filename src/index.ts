@@ -1,5 +1,6 @@
 // src/index.ts — @meridian-synergy/ui package entry point
 
+export { default as MsLogo   } from './components/MsLogo/MsLogo.vue'
 export { default as MsButton } from './components/MsButton/MsButton.vue'
 export { default as MsBadge  } from './components/MsBadge/MsBadge.vue'
 export { default as MsInput  } from './components/MsInput/MsInput.vue'
