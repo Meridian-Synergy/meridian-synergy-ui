@@ -10,3 +10,4 @@ export { default as MsSocialLinks } from './components/MsSocialLinks/MsSocialLin
 export type { SocialLinkItem, SocialNetwork } from './components/MsSocialLinks/MsSocialLinks.vue'
 export { default as MsBreadcrumb  } from './components/MsBreadcrumb/MsBreadcrumb.vue'
 export type { BreadcrumbItem } from './components/MsBreadcrumb/MsBreadcrumb.vue'
+export { default as MsPageHero   } from './components/MsPageHero/MsPageHero.vue'
