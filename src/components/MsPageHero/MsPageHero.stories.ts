@@ -30,7 +30,7 @@ export const Default: Story = {
 export const Large: Story = {
   args: {
     title: 'Nos services drone professionnels',
-    desc:  'Six domaines d'expertise pour répondre aux besoins des professionnels en Bourgogne et Nièvre.',
+    desc:  "Six domaines d'expertise pour répondre aux besoins des professionnels en Bourgogne et Nièvre.",
     badge: 'Services',
     size:  'lg',
     crumbs: [
