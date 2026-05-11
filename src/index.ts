@@ -21,3 +21,4 @@ export type { MsContactAction, MsContactActionType } from './components/MsContac
 export { default as MsContactChannel } from './components/MsContactChannel/MsContactChannel.vue'
 export type { MsContactChannelType }   from './components/MsContactChannel/MsContactChannel.vue'
 export { default as MsSocialCard     } from './components/MsSocialCard/MsSocialCard.vue'
+export { default as MsThemeToggle   } from './components/MsThemeToggle/MsThemeToggle.vue'
