@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 
 const props = withDefaults(defineProps<{
   /** Layout variant */
@@ -13,9 +13,7 @@ const props = withDefaults(defineProps<{
   color:   'navy',
 })
 
-// Unique ID per instance — prevents clipPath conflicts when multiple logos co-exist
-const uid  = Math.random().toString(36).slice(2, 7)
-const clip = `ms-logo-clip-${uid}`
+const clip = `ms-logo-clip-${useId()}`
 
 const main = computed(() => props.color === 'white' ? '#FFFFFF' : '#1B2A4A')
 const gold = '#C9A84C'
