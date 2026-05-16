@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Language rule — ABSOLUTE
+
+**All code must be written in English, no exception:**
+- Comments (`//`, `/* */`) in JS, TS, and Vue `<script>` blocks
+- CSS/SCSS comments and class names
+- Variable names, function names, method names
+- TypeScript interfaces, types, enums and their properties
+- HTML `id`, `data-*` attributes and any developer-facing identifiers
+
+The only content allowed in French (or other languages):
+- User-facing text inside i18n files (`fr.json`, `en.json`, …)
+- String literals displayed to end users
+- Existing production database column/table names (do not rename)
+
+---
+
 ## Projet
 
 **Meridian Synergy** — Plateforme SaaS dans le domaine du drone professionnel.
