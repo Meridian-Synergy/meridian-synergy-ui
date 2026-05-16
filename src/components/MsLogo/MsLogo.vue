@@ -51,7 +51,7 @@ const line2 = computed(() => props.brand === 'waypoint360' ? '360'      : 'SYNER
     </g>
     <circle cx="41" cy="41" r="36.5" fill="none" :stroke="main" stroke-width="2.7"/>
     <text x="97" y="34" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" letter-spacing="2.8">{{ line1 }}</text>
-    <text x="97" y="59" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" :letter-spacing="brand === 'waypoint360' ? '14' : '3.6'">{{ line2 }}</text>
+    <text x="97" y="59" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" letter-spacing="3.6">{{ line2 }}</text>
   </svg>
 
   <!-- ── Vertical (icon top + "MERIDIAN / SYNERGY" below) ── -->
@@ -75,7 +75,7 @@ const line2 = computed(() => props.brand === 'waypoint360' ? '360'      : 'SYNER
     </g>
     <circle cx="100" cy="82" r="70" fill="none" :stroke="main" stroke-width="3.2"/>
     <text x="100" y="181" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" letter-spacing="3">{{ line1 }}</text>
-    <text x="100" y="206" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" :letter-spacing="brand === 'waypoint360' ? '16' : '4'">{{ line2 }}</text>
+    <text x="100" y="206" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" letter-spacing="4">{{ line2 }}</text>
   </svg>
 
   <!-- ── Icon only (for header / favicon-like use) ── -->
