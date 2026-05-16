@@ -8,9 +8,12 @@ const props = withDefaults(defineProps<{
   color?:   'navy' | 'white'
   /** Explicit pixel width. Defaults: horizontal=300, vertical=175, icon=40 */
   width?:   number
+  /** Brand to display alongside the icon */
+  brand?:   'meridian-synergy' | 'waypoint360'
 }>(), {
   variant: 'horizontal',
   color:   'navy',
+  brand:   'meridian-synergy',
 })
 
 const clip = `ms-logo-clip-${useId()}`
@@ -20,6 +23,10 @@ const gold = '#C9A84C'
 
 const defaults = { horizontal: 300, vertical: 175, icon: 40 }
 const w = computed(() => props.width ?? defaults[props.variant])
+
+const label = computed(() => props.brand === 'waypoint360' ? 'Waypoint360' : 'Meridian Synergy')
+const line1 = computed(() => props.brand === 'waypoint360' ? 'WAYPOINT' : 'MERIDIAN')
+const line2 = computed(() => props.brand === 'waypoint360' ? '360'      : 'SYNERGY')
 </script>
 
 <template>
@@ -29,7 +36,7 @@ const w = computed(() => props.width ?? defaults[props.variant])
     :width="w"
     viewBox="0 0 310 82"
     xmlns="http://www.w3.org/2000/svg"
-    aria-label="Meridian Synergy"
+    :aria-label="label"
     role="img"
   >
     <defs>
@@ -43,8 +50,8 @@ const w = computed(() => props.width ?? defaults[props.variant])
       <line x1="41" y1="4.5" x2="41" y2="77.5" :stroke="gold" stroke-width="2.8"/>
     </g>
     <circle cx="41" cy="41" r="36.5" fill="none" :stroke="main" stroke-width="2.7"/>
-    <text x="97" y="34"  font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" letter-spacing="2.8">MERIDIAN</text>
-    <text x="97" y="59"  font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" letter-spacing="3.6">SYNERGY</text>
+    <text x="97" y="34" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" letter-spacing="2.8">{{ line1 }}</text>
+    <text x="97" y="59" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="20.5" :fill="main" :letter-spacing="brand === 'waypoint360' ? '14' : '3.6'">{{ line2 }}</text>
   </svg>
 
   <!-- ── Vertical (icon top + "MERIDIAN / SYNERGY" below) ── -->
@@ -53,7 +60,7 @@ const w = computed(() => props.width ?? defaults[props.variant])
     :width="w"
     viewBox="0 0 200 220"
     xmlns="http://www.w3.org/2000/svg"
-    aria-label="Meridian Synergy"
+    :aria-label="label"
     role="img"
   >
     <defs>
@@ -67,8 +74,8 @@ const w = computed(() => props.width ?? defaults[props.variant])
       <line x1="100" y1="12" x2="100" y2="152" :stroke="gold" stroke-width="3.5"/>
     </g>
     <circle cx="100" cy="82" r="70" fill="none" :stroke="main" stroke-width="3.2"/>
-    <text x="100" y="181" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" letter-spacing="3">MERIDIAN</text>
-    <text x="100" y="206" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" letter-spacing="4">SYNERGY</text>
+    <text x="100" y="181" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" letter-spacing="3">{{ line1 }}</text>
+    <text x="100" y="206" text-anchor="middle" font-family="'Barlow',Arial,sans-serif" font-weight="700" font-size="21" :fill="main" :letter-spacing="brand === 'waypoint360' ? '16' : '4'">{{ line2 }}</text>
   </svg>
 
   <!-- ── Icon only (for header / favicon-like use) ── -->
