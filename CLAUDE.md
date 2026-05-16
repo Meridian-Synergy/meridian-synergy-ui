@@ -18,6 +18,17 @@ The only content allowed in French (or other languages):
 
 ---
 
+## Working method — ABSOLUTE
+
+Before any non-trivial implementation, always:
+1. **Present the plan**: list the files to be changed, the approach, and any trade-offs worth noting
+2. **Ask for confirmation**: explicitly wait for a go-ahead before writing any code
+3. **Only then implement**: start coding only after the user confirms
+
+This applies to all features, refactors, and multi-file changes — regardless of complexity.
+
+---
+
 ## Projet
 
 **Meridian Synergy** — Plateforme SaaS dans le domaine du drone professionnel.
