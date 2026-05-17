@@ -56,6 +56,24 @@ Ce repo (`meridian-synergy-ui`) est le **Design System partagé** entre :
 
 ---
 
+## Component contract — Backward compatibility — ABSOLUTE
+
+This package is consumed by multiple apps (`waypoint360-app`, `waypoint360-web`, `meridian-synergy-web`). A breaking change forces simultaneous updates in every consumer — which is not always possible.
+
+**Rules for every component change:**
+- **Never remove a prop or event** — mark it `@deprecated` in JSDoc, keep it functional
+- **Never rename a prop or emitted event** — add the new name alongside, remove the old in a major version
+- **Never restrict a prop's type** (e.g. `string | number` → `string` is breaking)
+- **All new props must have a default value** so existing usage without the prop keeps working
+- **Additive-first**: add optional props with defaults — never add required props to an existing component
+
+**When a breaking change is truly unavoidable:**
+1. Bump the major version: `npm version major`
+2. Document the migration in `CHANGELOG.md`
+3. Coordinate updates in all consumer repos before publishing the new version
+
+---
+
 ## Règle absolue : source de vérité des composants
 
 Tous les composants UI visuels sont créés **ici uniquement**.
