@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const DGAC_KEYS = ['a1_a3', 'a2_cofc', 'sts_01', 'sts_02'] as const
 const ADDITIONAL_KEYS = ['certibiocide', 'certiphyto'] as const
 
