@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const DGAC_KEYS = ['a1_a3', 'a2_cofc', 'sts_01', 'sts_02'] as const
+const DGAC_KEYS = ['a1_a3', 'a2_cofc', 'sts_01', 'sts_02', 'cats'] as const
 const ADDITIONAL_KEYS = ['certibiocide', 'certiphyto'] as const
 
 type DgacKey       = typeof DGAC_KEYS[number]
@@ -14,6 +14,7 @@ export interface MsCertificationsValue {
   a2_cofc?:      boolean
   sts_01?:       boolean
   sts_02?:       boolean
+  cats?:         boolean
   certibiocide?: boolean
   certiphyto?:   boolean
 }
