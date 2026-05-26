@@ -4,8 +4,10 @@ import MsSocialLinks from './MsSocialLinks.vue'
 const sampleLinks = [
   { network: 'instagram' as const, href: '#', label: 'Instagram' },
   { network: 'linkedin'  as const, href: '#', label: 'LinkedIn'  },
-  { network: 'tiktok'   as const, href: '#', label: 'TikTok'   },
-  { network: 'youtube'  as const, href: '#', label: 'YouTube'  },
+  { network: 'tiktok'   as const, href: '#', label: 'TikTok'    },
+  { network: 'youtube'  as const, href: '#', label: 'YouTube'   },
+  { network: 'twitter'  as const, href: '#', label: 'X'         },
+  { network: 'telegram' as const, href: '#', label: 'Telegram'  },
   { network: 'email'    as const, href: 'mailto:contact@example.com', label: 'Email' },
 ]
 
