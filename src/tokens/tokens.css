@@ -12,9 +12,11 @@
   --ms-color-dark-bg2: #182236;
 
   /* Extended surface tokens */
-  --ms-color-bg:       #ECEEF3;   /* Page background light mode */
-  --ms-color-border:   #D5D9E4;   /* Standard border */
-  --ms-color-muted:    #8C95AA;   /* Muted labels, meta text */
+  --ms-color-bg:           #ECEEF3;   /* Page background light mode */
+  --ms-color-border:       #D5D9E4;   /* Standard border */
+  --ms-color-muted:        #8C95AA;   /* Muted labels, meta text — use on dark backgrounds */
+  --ms-color-muted-strong: #636B82;   /* Accessible muted on light bg — WCAG AA 5.1:1 on white */
+  --ms-color-sky-dark:     #0074A8;   /* Accessible sky on light bg — WCAG AA 5.2:1 on white */
 
   /* Status */
   --ms-color-success:  #22c55e;
