@@ -43,7 +43,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>()
 .ms-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Sizes */
-.ms-btn--sm { padding: var(--ms-space-xs) var(--ms-space-sm);  font-size: 13px; }
+.ms-btn--sm { padding: 6px 12px;  font-size: 13px; }
 .ms-btn--md { padding: var(--ms-space-sm) var(--ms-space-md);  font-size: 15px; }
 .ms-btn--lg { padding: var(--ms-space-md) var(--ms-space-lg);  font-size: 17px; }
 
