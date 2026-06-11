@@ -105,6 +105,15 @@ Les repos `meridian-synergy-web` et `meridian-synergy-app` n'ont jamais de compo
 
 ---
 
+## Services & outils tiers
+
+| Outil | Rôle |
+|---|---|
+| **Atlassian Jira** | Tickets et suivi des composants à créer/améliorer |
+| **Atlassian Confluence** | Spécifications design system et guidelines d'utilisation |
+
+---
+
 ## Commandes
 
 ```bash
