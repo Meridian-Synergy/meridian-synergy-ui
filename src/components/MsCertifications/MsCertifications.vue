@@ -100,7 +100,7 @@ const hasAdditional = computed(() =>
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ms-text-sub);
+  color: var(--ms-color-text-sub);
   margin-bottom: 12px;
 }
 
@@ -112,7 +112,7 @@ const hasAdditional = computed(() =>
 
 .ms-certs__divider {
   margin: 16px 0;
-  border-top: 1px solid var(--ms-border);
+  border-top: 1px solid var(--ms-color-border);
   opacity: 0.4;
 }
 
@@ -130,33 +130,33 @@ const hasAdditional = computed(() =>
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  border: 1.5px solid var(--ms-border);
+  border: 1.5px solid var(--ms-color-border);
   border-radius: 4px;
-  background: var(--ms-input-bg);
+  background: var(--ms-color-input-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background var(--ms-transition), border-color var(--ms-transition);
 }
 .ms-certs__check--on {
-  background: var(--ms-sky);
-  border-color: var(--ms-sky);
+  background: var(--ms-color-sky);
+  border-color: var(--ms-color-sky);
   color: #fff;
 }
 .ms-certs__item:hover .ms-certs__check:not(.ms-certs__check--on) {
-  border-color: var(--ms-sky);
+  border-color: var(--ms-color-sky);
 }
 
 .ms-certs__label {
   font-size: 13px;
-  color: var(--ms-text);
+  color: var(--ms-color-text);
   line-height: 1.4;
 }
 
 .ms-certs__hint {
   margin-top: 10px;
   font-size: 11px;
-  color: var(--ms-text-sub);
+  color: var(--ms-color-text-sub);
   opacity: 0.7;
 }
 </style>
