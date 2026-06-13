@@ -9,34 +9,97 @@ type AdditionalKey = typeof ADDITIONAL_KEYS[number]
 
 export type CertKey = DgacKey | AdditionalKey
 
+// A cert is either a plain held flag (legacy) or a held flag with an obtention
+// date. Both shapes are accepted so existing boolean consumers keep working.
+export type CertEntry = boolean | { held: boolean; obtained?: string | null }
+
 export interface MsCertificationsValue {
-  a1_a3?:        boolean
-  a2_cofc?:      boolean
-  sts_01?:       boolean
-  sts_02?:       boolean
-  cats?:         boolean
-  certibiocide?: boolean
-  certiphyto?:   boolean
+  a1_a3?:        CertEntry
+  a2_cofc?:      CertEntry
+  sts_01?:       CertEntry
+  sts_02?:       CertEntry
+  cats?:         CertEntry
+  certibiocide?: CertEntry
+  certiphyto?:   CertEntry
+}
+
+export interface MsCertificationsDateLabels {
+  obtained:  string
+  expiresOn: string   // template containing "{date}"
+  valid:     string
+  soon:      string
+  expired:   string
 }
 
 const props = withDefaults(defineProps<{
-  modelValue:       MsCertificationsValue
-  labels:           Record<DgacKey, string>
-  title?:           string
-  hint?:            string
-  additionalTitle?: string
+  modelValue:        MsCertificationsValue
+  labels:            Record<DgacKey, string>
+  title?:            string
+  hint?:             string
+  additionalTitle?:  string
   additionalLabels?: Partial<Record<AdditionalKey, string>>
+  /** Show obtention date + computed expiry/status under each held cert. */
+  withDates?:        boolean
+  /** Validity period in years (EU drone competency certs = 5). */
+  validityYears?:    number
+  /** Translated strings for the date UI (required when withDates is true). */
+  dateLabels?:       MsCertificationsDateLabels
 }>(), {
   title:            undefined,
   hint:             undefined,
   additionalTitle:  undefined,
   additionalLabels: undefined,
+  withDates:        false,
+  validityYears:    5,
+  dateLabels:       undefined,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: MsCertificationsValue] }>()
 
+function isHeld(v: CertEntry | undefined): boolean {
+  return typeof v === 'boolean' ? v : !!v?.held
+}
+function obtainedOf(v: CertEntry | undefined): string | null {
+  return typeof v === 'object' && v ? (v.obtained ?? null) : null
+}
+
+// Emit in the shape matching the mode: boolean (legacy) or { held, obtained }.
+function emitEntry(key: CertKey, held: boolean, obtained: string | null) {
+  const entry: CertEntry = props.withDates ? { held, obtained } : held
+  emit('update:modelValue', { ...props.modelValue, [key]: entry })
+}
 function toggle(key: CertKey) {
-  emit('update:modelValue', { ...props.modelValue, [key]: !props.modelValue[key] })
+  emitEntry(key, !isHeld(props.modelValue[key]), obtainedOf(props.modelValue[key]))
+}
+function setDate(key: CertKey, e: Event) {
+  emitEntry(key, true, (e.target as HTMLInputElement).value || null)
+}
+
+function expiry(key: CertKey): Date | null {
+  const obtained = obtainedOf(props.modelValue[key])
+  if (!obtained) return null
+  const d = new Date(obtained)
+  d.setFullYear(d.getFullYear() + props.validityYears)
+  return d
+}
+function fmtDate(d: Date): string {
+  return d.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+function status(key: CertKey): 'valid' | 'soon' | 'expired' | 'unset' {
+  const exp = expiry(key)
+  if (!exp) return 'unset'
+  const days = Math.floor((exp.getTime() - Date.now()) / 86400000)
+  if (days < 0) return 'expired'
+  if (days <= 60) return 'soon'
+  return 'valid'
+}
+function expiresText(key: CertKey): string {
+  const exp = expiry(key)
+  return exp && props.dateLabels ? props.dateLabels.expiresOn.replace('{date}', fmtDate(exp)) : ''
+}
+function statusText(key: CertKey): string {
+  const s = status(key)
+  return props.dateLabels && s !== 'unset' ? props.dateLabels[s] : ''
 }
 
 const hasAdditional = computed(() =>
@@ -48,45 +111,50 @@ const hasAdditional = computed(() =>
   <div class="ms-certs">
     <p v-if="title" class="ms-certs__title">{{ title }}</p>
     <div class="ms-certs__grid">
-      <label v-for="key in DGAC_KEYS" :key="key" class="ms-certs__item">
-        <input
-          type="checkbox"
-          :checked="!!modelValue[key]"
-          class="ms-certs__native"
-          @change="toggle(key)"
-        />
-        <span class="ms-certs__check" :class="{ 'ms-certs__check--on': modelValue[key] }">
-          <svg v-if="modelValue[key]" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-        <span class="ms-certs__label">{{ labels[key] }}</span>
-      </label>
+      <div v-for="key in DGAC_KEYS" :key="key" class="ms-certs__row">
+        <label class="ms-certs__item">
+          <input type="checkbox" :checked="isHeld(modelValue[key])" class="ms-certs__native" @change="toggle(key)" />
+          <span class="ms-certs__check" :class="{ 'ms-certs__check--on': isHeld(modelValue[key]) }">
+            <svg v-if="isHeld(modelValue[key])" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="ms-certs__label">{{ labels[key] }}</span>
+        </label>
+        <div v-if="withDates && dateLabels && isHeld(modelValue[key])" class="ms-certs__dates">
+          <label class="ms-certs__date-label">{{ dateLabels.obtained }}</label>
+          <input type="date" class="ms-certs__date-input" :value="obtainedOf(modelValue[key]) ?? ''" @change="setDate(key, $event)" />
+          <template v-if="expiry(key)">
+            <span class="ms-certs__expiry">{{ expiresText(key) }}</span>
+            <span class="ms-certs__status" :class="`ms-certs__status--${status(key)}`">{{ statusText(key) }}</span>
+          </template>
+        </div>
+      </div>
     </div>
 
     <template v-if="hasAdditional">
       <div class="ms-certs__divider" />
       <p v-if="additionalTitle" class="ms-certs__title">{{ additionalTitle }}</p>
       <div class="ms-certs__grid">
-        <label
-          v-for="key in ADDITIONAL_KEYS"
-          v-show="additionalLabels![key] !== undefined"
-          :key="key"
-          class="ms-certs__item"
-        >
-          <input
-            type="checkbox"
-            :checked="!!modelValue[key]"
-            class="ms-certs__native"
-            @change="toggle(key)"
-          />
-          <span class="ms-certs__check" :class="{ 'ms-certs__check--on': modelValue[key] }">
-            <svg v-if="modelValue[key]" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="ms-certs__label">{{ additionalLabels![key] }}</span>
-        </label>
+        <div v-for="key in ADDITIONAL_KEYS" v-show="additionalLabels![key] !== undefined" :key="key" class="ms-certs__row">
+          <label class="ms-certs__item">
+            <input type="checkbox" :checked="isHeld(modelValue[key])" class="ms-certs__native" @change="toggle(key)" />
+            <span class="ms-certs__check" :class="{ 'ms-certs__check--on': isHeld(modelValue[key]) }">
+              <svg v-if="isHeld(modelValue[key])" width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="ms-certs__label">{{ additionalLabels![key] }}</span>
+          </label>
+          <div v-if="withDates && dateLabels && isHeld(modelValue[key])" class="ms-certs__dates">
+            <label class="ms-certs__date-label">{{ dateLabels.obtained }}</label>
+            <input type="date" class="ms-certs__date-input" :value="obtainedOf(modelValue[key]) ?? ''" @change="setDate(key, $event)" />
+            <template v-if="expiry(key)">
+              <span class="ms-certs__expiry">{{ expiresText(key) }}</span>
+              <span class="ms-certs__status" :class="`ms-certs__status--${status(key)}`">{{ statusText(key) }}</span>
+            </template>
+          </div>
+        </div>
       </div>
     </template>
 
@@ -108,6 +176,12 @@ const hasAdditional = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.ms-certs__row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .ms-certs__divider {
@@ -152,6 +226,41 @@ const hasAdditional = computed(() =>
   color: var(--ms-color-text);
   line-height: 1.4;
 }
+
+.ms-certs__dates {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-left: 28px;
+}
+.ms-certs__date-label {
+  font-size: 12px;
+  color: var(--ms-color-text-sub);
+  white-space: nowrap;
+}
+.ms-certs__date-input {
+  font-size: 13px;
+  padding: 5px 8px;
+  border: 1px solid var(--ms-color-border);
+  border-radius: var(--ms-radius);
+  background: var(--ms-color-input-bg);
+  color: var(--ms-color-input-text, var(--ms-color-text));
+}
+.ms-certs__expiry {
+  font-size: 12px;
+  color: var(--ms-color-text-sub);
+  white-space: nowrap;
+}
+.ms-certs__status {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ms-certs__status--valid   { color: #16a34a; }
+.ms-certs__status--soon    { color: #eab308; }
+.ms-certs__status--expired { color: #ef4444; }
 
 .ms-certs__hint {
   margin-top: 10px;
