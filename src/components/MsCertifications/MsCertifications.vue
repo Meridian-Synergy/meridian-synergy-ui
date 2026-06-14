@@ -9,9 +9,9 @@ type AdditionalKey = typeof ADDITIONAL_KEYS[number]
 
 export type CertKey = DgacKey | AdditionalKey
 
-// A cert is either a plain held flag (legacy) or a held flag with an obtention
-// date. Both shapes are accepted so existing boolean consumers keep working.
-export type CertEntry = boolean | { held: boolean; obtained?: string | null }
+// A cert is either a plain held flag (legacy) or held + obtention date + issuing
+// country. Object keeps room for a future repeatable (multi-country) model.
+export type CertEntry = boolean | { held: boolean; obtained?: string | null; country?: string | null }
 
 export interface MsCertificationsValue {
   a1_a3?:        CertEntry
@@ -31,6 +31,8 @@ export interface MsCertificationsDateLabels {
   expired:   string
 }
 
+export interface MsCertCountryOption { value: string; label: string }
+
 const props = withDefaults(defineProps<{
   modelValue:        MsCertificationsValue
   labels:            Record<DgacKey, string>
@@ -44,6 +46,14 @@ const props = withDefaults(defineProps<{
   validityYears?:    number
   /** Translated strings for the date UI (required when withDates is true). */
   dateLabels?:       MsCertificationsDateLabels
+  /** Show an issuing-country selector for each held cert. */
+  withCountry?:      boolean
+  /** Country choices for the selector. */
+  countryOptions?:   MsCertCountryOption[]
+  /** Field label for the country selector. */
+  countryLabel?:     string
+  /** Country pre-selected when a cert is first marked as held. */
+  defaultCountry?:   string | null
 }>(), {
   title:            undefined,
   hint:             undefined,
@@ -52,9 +62,16 @@ const props = withDefaults(defineProps<{
   withDates:        false,
   validityYears:    5,
   dateLabels:       undefined,
+  withCountry:      false,
+  countryOptions:   () => [],
+  countryLabel:     undefined,
+  defaultCountry:   null,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: MsCertificationsValue] }>()
+
+// Rich (object) value mode whenever dates or country are tracked.
+const richMode = computed(() => props.withDates || props.withCountry)
 
 function isHeld(v: CertEntry | undefined): boolean {
   return typeof v === 'boolean' ? v : !!v?.held
@@ -62,17 +79,25 @@ function isHeld(v: CertEntry | undefined): boolean {
 function obtainedOf(v: CertEntry | undefined): string | null {
   return typeof v === 'object' && v ? (v.obtained ?? null) : null
 }
+function countryOf(v: CertEntry | undefined): string | null {
+  return typeof v === 'object' && v ? (v.country ?? null) : null
+}
 
-// Emit in the shape matching the mode: boolean (legacy) or { held, obtained }.
-function emitEntry(key: CertKey, held: boolean, obtained: string | null) {
-  const entry: CertEntry = props.withDates ? { held, obtained } : held
+function emitEntry(key: CertKey, held: boolean, obtained: string | null, country: string | null) {
+  const entry: CertEntry = richMode.value ? { held, obtained, country } : held
   emit('update:modelValue', { ...props.modelValue, [key]: entry })
 }
 function toggle(key: CertKey) {
-  emitEntry(key, !isHeld(props.modelValue[key]), obtainedOf(props.modelValue[key]))
+  const nextHeld = !isHeld(props.modelValue[key])
+  // Default the country to the user's own when a cert is first marked held.
+  const country = nextHeld ? (countryOf(props.modelValue[key]) ?? props.defaultCountry ?? null) : countryOf(props.modelValue[key])
+  emitEntry(key, nextHeld, obtainedOf(props.modelValue[key]), country)
 }
 function setDate(key: CertKey, e: Event) {
-  emitEntry(key, true, (e.target as HTMLInputElement).value || null)
+  emitEntry(key, isHeld(props.modelValue[key]), (e.target as HTMLInputElement).value || null, countryOf(props.modelValue[key]))
+}
+function setCountry(key: CertKey, e: Event) {
+  emitEntry(key, isHeld(props.modelValue[key]), obtainedOf(props.modelValue[key]), (e.target as HTMLSelectElement).value || null)
 }
 
 function expiry(key: CertKey): Date | null {
@@ -105,13 +130,15 @@ function statusText(key: CertKey): string {
 const hasAdditional = computed(() =>
   !!props.additionalLabels && Object.keys(props.additionalLabels).length > 0
 )
+
+const RENDER_KEYS = computed<CertKey[]>(() => [...DGAC_KEYS])
 </script>
 
 <template>
   <div class="ms-certs">
     <p v-if="title" class="ms-certs__title">{{ title }}</p>
     <div class="ms-certs__grid">
-      <div v-for="key in DGAC_KEYS" :key="key" class="ms-certs__row">
+      <div v-for="key in RENDER_KEYS" :key="key" class="ms-certs__row">
         <label class="ms-certs__item">
           <input type="checkbox" :checked="isHeld(modelValue[key])" class="ms-certs__native" @change="toggle(key)" />
           <span class="ms-certs__check" :class="{ 'ms-certs__check--on': isHeld(modelValue[key]) }">
@@ -119,14 +146,23 @@ const hasAdditional = computed(() =>
               <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          <span class="ms-certs__label">{{ labels[key] }}</span>
+          <span class="ms-certs__label">{{ labels[key as DgacKey] }}</span>
         </label>
-        <div v-if="withDates && dateLabels && isHeld(modelValue[key])" class="ms-certs__dates">
-          <label class="ms-certs__date-label">{{ dateLabels.obtained }}</label>
-          <input type="date" class="ms-certs__date-input" :value="obtainedOf(modelValue[key]) ?? ''" @change="setDate(key, $event)" />
-          <template v-if="expiry(key)">
-            <span class="ms-certs__expiry">{{ expiresText(key) }}</span>
-            <span class="ms-certs__status" :class="`ms-certs__status--${status(key)}`">{{ statusText(key) }}</span>
+        <div v-if="richMode && isHeld(modelValue[key])" class="ms-certs__meta">
+          <template v-if="withCountry">
+            <label class="ms-certs__meta-label">{{ countryLabel }}</label>
+            <select class="ms-certs__select" :value="countryOf(modelValue[key]) ?? defaultCountry ?? ''" @change="setCountry(key, $event)">
+              <option value="">—</option>
+              <option v-for="c in countryOptions" :key="c.value" :value="c.value">{{ c.label }}</option>
+            </select>
+          </template>
+          <template v-if="withDates && dateLabels">
+            <label class="ms-certs__meta-label">{{ dateLabels.obtained }}</label>
+            <input type="date" class="ms-certs__date-input" :value="obtainedOf(modelValue[key]) ?? ''" @change="setDate(key, $event)" />
+            <template v-if="expiry(key)">
+              <span class="ms-certs__expiry">{{ expiresText(key) }}</span>
+              <span class="ms-certs__status" :class="`ms-certs__status--${status(key)}`">{{ statusText(key) }}</span>
+            </template>
           </template>
         </div>
       </div>
@@ -146,12 +182,21 @@ const hasAdditional = computed(() =>
             </span>
             <span class="ms-certs__label">{{ additionalLabels![key] }}</span>
           </label>
-          <div v-if="withDates && dateLabels && isHeld(modelValue[key])" class="ms-certs__dates">
-            <label class="ms-certs__date-label">{{ dateLabels.obtained }}</label>
-            <input type="date" class="ms-certs__date-input" :value="obtainedOf(modelValue[key]) ?? ''" @change="setDate(key, $event)" />
-            <template v-if="expiry(key)">
-              <span class="ms-certs__expiry">{{ expiresText(key) }}</span>
-              <span class="ms-certs__status" :class="`ms-certs__status--${status(key)}`">{{ statusText(key) }}</span>
+          <div v-if="richMode && isHeld(modelValue[key])" class="ms-certs__meta">
+            <template v-if="withCountry">
+              <label class="ms-certs__meta-label">{{ countryLabel }}</label>
+              <select class="ms-certs__select" :value="countryOf(modelValue[key]) ?? defaultCountry ?? ''" @change="setCountry(key, $event)">
+                <option value="">—</option>
+                <option v-for="c in countryOptions" :key="c.value" :value="c.value">{{ c.label }}</option>
+              </select>
+            </template>
+            <template v-if="withDates && dateLabels">
+              <label class="ms-certs__meta-label">{{ dateLabels.obtained }}</label>
+              <input type="date" class="ms-certs__date-input" :value="obtainedOf(modelValue[key]) ?? ''" @change="setDate(key, $event)" />
+              <template v-if="expiry(key)">
+                <span class="ms-certs__expiry">{{ expiresText(key) }}</span>
+                <span class="ms-certs__status" :class="`ms-certs__status--${status(key)}`">{{ statusText(key) }}</span>
+              </template>
             </template>
           </div>
         </div>
@@ -178,10 +223,12 @@ const hasAdditional = computed(() =>
   gap: 10px;
 }
 
+/* Cert and its date/country sit on one line, wrapping on narrow screens. */
 .ms-certs__row {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
 }
 
 .ms-certs__divider {
@@ -196,6 +243,7 @@ const hasAdditional = computed(() =>
   gap: 10px;
   cursor: pointer;
   user-select: none;
+  min-width: 220px;
 }
 
 .ms-certs__native { display: none; }
@@ -227,19 +275,19 @@ const hasAdditional = computed(() =>
   line-height: 1.4;
 }
 
-.ms-certs__dates {
+.ms-certs__meta {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  padding-left: 28px;
 }
-.ms-certs__date-label {
+.ms-certs__meta-label {
   font-size: 12px;
   color: var(--ms-color-text-sub);
   white-space: nowrap;
 }
-.ms-certs__date-input {
+.ms-certs__date-input,
+.ms-certs__select {
   font-size: 13px;
   padding: 5px 8px;
   border: 1px solid var(--ms-color-border);

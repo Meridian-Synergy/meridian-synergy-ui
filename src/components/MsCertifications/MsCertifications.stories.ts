@@ -41,6 +41,13 @@ export const Default: Story = {
   },
 }
 
+const countryOptions = [
+  { value: 'FR', label: 'France' },
+  { value: 'BE', label: 'Belgique' },
+  { value: 'LU', label: 'Luxembourg' },
+  { value: 'DE', label: 'Allemagne' },
+]
+
 export const WithDates: Story = {
   args: {
     title: 'Certifications',
@@ -48,10 +55,14 @@ export const WithDates: Story = {
     withDates: true,
     validityYears: 5,
     dateLabels,
+    withCountry: true,
+    countryOptions,
+    countryLabel: 'Issued in',
+    defaultCountry: 'FR',
     modelValue: {
-      a1_a3:   { held: true, obtained: '2022-03-15' },
-      a2_cofc: { held: true, obtained: '2021-01-10' }, // expired
-      cats:    { held: true, obtained: null },          // held, no date yet
+      a1_a3:   { held: true, obtained: '2022-03-15', country: 'FR' },
+      a2_cofc: { held: true, obtained: '2021-01-10', country: 'BE' }, // expired
+      cats:    { held: true, obtained: null, country: 'FR' },          // held, no date yet
       sts_01:  false,
     },
   },
