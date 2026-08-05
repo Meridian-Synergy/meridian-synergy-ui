@@ -8,6 +8,7 @@ const meta: Meta<typeof MsButton> = {
   argTypes: {
     variant: { control: 'select', options: ['primary', 'secondary', 'cta', 'critical'] },
     size:    { control: 'select', options: ['sm', 'md', 'lg'] },
+    as:      { control: 'select', options: ['button', 'a'] },
   },
 }
 export default meta
@@ -19,6 +20,17 @@ export const Secondary: Story = { args: { label: 'En savoir plus',   variant: 's
 export const CTA:       Story = { args: { label: 'Créer un compte',  variant: 'cta'       } }
 export const Critical:  Story = { args: { label: 'Supprimer',        variant: 'critical'  } }
 export const Disabled:  Story = { args: { label: 'Indisponible',     disabled: true       } }
+
+// A CTA that navigates must render as a real link, not a button with a click
+// handler — see the `as` prop. In Nuxt, pass `:as="NuxtLink"` with a `to`.
+export const AsLink: Story = {
+  args: { label: 'Nous contacter', variant: 'primary', as: 'a' },
+  render: (args) => ({
+    components: { MsButton },
+    setup: () => ({ args }),
+    template: '<MsButton v-bind="args" href="#" />',
+  }),
+}
 
 export const Dark: Story = {
   args: { label: 'Démarrer', variant: 'primary' },
