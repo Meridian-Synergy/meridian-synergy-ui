@@ -1,5 +1,5 @@
 <script setup lang="ts">
-export type MsContactChannelType = 'whatsapp' | 'email'
+export type MsContactChannelType = 'whatsapp' | 'email' | 'phone'
 
 defineProps<{
   type:  MsContactChannelType
@@ -27,6 +27,13 @@ defineProps<{
       <svg v-else-if="type === 'email'" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="2" y="4" width="20" height="16" rx="3" stroke="currentColor" stroke-width="1.75"/>
         <path d="M2 8l10 7 10-7" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+      </svg>
+      <!-- Téléphone. Ajouté après notre propre audit : un numéro affiché sous une
+           icône de messagerie n'est pas appelable d'un geste, et le visiteur qui
+           n'utilise pas cette messagerie doit le recopier à la main. -->
+      <svg v-else-if="type === 'phone'" width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6.6 2.5h3l1.5 4-2 1.4a12.5 12.5 0 0 0 5.5 5.5l1.4-2 4 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.6 4.7a2 2 0 0 1 2-2.2z"
+              stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
       </svg>
     </div>
 
@@ -61,6 +68,7 @@ defineProps<{
 
 .ms-contact-channel--whatsapp:hover { border-color: #25D366; }
 .ms-contact-channel--email:hover    { border-color: var(--ms-color-sky); }
+.ms-contact-channel--phone:hover    { border-color: var(--ms-color-navy); }
 
 .ms-contact-channel__icon {
   width: 48px;
@@ -77,6 +85,10 @@ defineProps<{
 .ms-contact-channel--email .ms-contact-channel__icon {
   background: rgba(0, 170, 239, 0.1);
   color: var(--ms-color-sky);
+}
+.ms-contact-channel--phone .ms-contact-channel__icon {
+  background: rgba(27, 43, 86, 0.08);
+  color: var(--ms-color-navy);
 }
 
 .ms-contact-channel__body {
