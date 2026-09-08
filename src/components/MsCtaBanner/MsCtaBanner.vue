@@ -56,9 +56,12 @@ defineProps<{
 
 .ms-cta-banner__desc {
   font-size: 1rem;
+  /* `--ms-color-muted` donne 4,58:1 sur le navy de ce bandeau, et convient.
+     ⚠️ L'`opacity: 0.8` qui suivait le ramenait à 3,47:1 : une opacité n'est pas
+     une couleur, c'est une fonction du fond, et elle se dérobe dès que le fond
+     change. Supprimée. */
   color: var(--ms-color-muted);
   margin: 0;
-  opacity: 0.8;
 }
 
 .ms-cta-banner__action {

@@ -52,7 +52,9 @@ withDefaults(defineProps<{
 
 .ms-page-hero__desc {
   font-size: 1.0625rem;
-  color: var(--ms-color-muted);
+  /* `--ms-color-muted` est prévu pour les fonds SOMBRES (4,58:1 sur le navy).
+     Sur le fond clair de page il tombe à 2,46:1. */
+  color: var(--ms-color-muted-strong);
   max-width: 560px;
   line-height: 1.7;
   margin: 16px 0 0;

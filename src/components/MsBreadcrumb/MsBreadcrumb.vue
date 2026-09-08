@@ -38,7 +38,9 @@ defineProps<{
 
 .ms-bc-link {
   font-size: 13px;
-  color: var(--ms-color-muted);
+  /* `--ms-color-muted` est prévu pour les fonds SOMBRES (4,58:1 sur le navy).
+     Sur le fond clair de page il tombe à 2,46:1. */
+  color: var(--ms-color-muted-strong);
   text-decoration: none;
   white-space: nowrap;
   transition: color var(--ms-transition-fast);

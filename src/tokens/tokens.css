@@ -14,9 +14,20 @@
   /* Extended surface tokens */
   --ms-color-bg:           #ECEEF3;   /* Page background light mode */
   --ms-color-border:       #D5D9E4;   /* Standard border */
-  --ms-color-muted:        #8C95AA;   /* Muted labels, meta text — use on dark backgrounds */
-  --ms-color-muted-strong: #636B82;   /* Accessible muted on light bg — WCAG AA 5.1:1 on white */
-  --ms-color-sky-dark:     #0074A8;   /* Accessible sky on light bg — WCAG AA 5.2:1 on white */
+  /* ⚠️ Un ratio se vérifie CONTRE UN FOND, et le fond doit être nommé. Ces trois
+     jetons portaient « on white », ce qui est vrai et insuffisant : la page, elle,
+     est sur --ms-color-bg (#ECEEF3), où les valeurs sont plus basses. Notre propre
+     audit du 2026-09-08 a trouvé `--ms-color-muted` employé sur fond clair dans
+     quatre composants, parce que son commentaire disait seulement à quoi il sert,
+     pas où il cesse de convenir. */
+  --ms-color-muted:        #8C95AA;   /* Texte sur fond SOMBRE uniquement : 4,58:1 sur le navy.
+                                         Sur #ECEEF3 : 2,46:1 — ne pas employer. */
+  --ms-color-muted-strong: #636B82;   /* Texte sur fond clair : 5,31 sur blanc · 5,00 sur #F8F8F8
+                                         · 4,57 sur #ECEEF3. Conforme partout. */
+  --ms-color-sky-dark:     #0074A8;   /* Sky en TEXTE ou en aplat sous du blanc :
+                                         5,17 sur blanc · 4,87 sur #F8F8F8
+                                         · ⚠️ 4,45 sur #ECEEF3, donc en échec pour du
+                                         petit texte sur le fond de page. */
 
   /* Status */
   --ms-color-success:  #22c55e;
