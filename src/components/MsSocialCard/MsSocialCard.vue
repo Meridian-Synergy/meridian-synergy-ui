@@ -101,6 +101,6 @@ defineProps<{
 
 .ms-social-card__handle {
   font-size: 12px;
-  color: var(--ms-color-muted);
+  color: var(--ms-color-muted-strong);
 }
 </style>

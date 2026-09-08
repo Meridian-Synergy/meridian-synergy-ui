@@ -48,7 +48,7 @@ defineProps<{
 
 .ms-value-card__desc {
   font-size: 0.875rem;
-  color: var(--ms-color-muted);
+  color: var(--ms-color-muted-strong);
   line-height: 1.65;
   margin: 0;
 }

@@ -104,7 +104,9 @@ defineProps<{
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ms-color-muted);
+  /* `muted` est prévu pour les fonds SOMBRES : sur le blanc cassé des cartes il
+     donne 2,83:1. Mesuré au pixel sur la page de contact du site. */
+  color: var(--ms-color-muted-strong);
 }
 
 .ms-contact-channel__value {
@@ -115,7 +117,7 @@ defineProps<{
 
 .ms-contact-channel__desc {
   font-size: 0.875rem;
-  color: var(--ms-color-muted);
+  color: var(--ms-color-muted-strong);
   line-height: 1.5;
 }
 
@@ -123,6 +125,11 @@ defineProps<{
   font-size: 13px;
   font-weight: 600;
 }
-.ms-contact-channel--whatsapp .ms-contact-channel__cta { color: #25D366; }
-.ms-contact-channel--email    .ms-contact-channel__cta { color: var(--ms-color-sky); }
+/* ⚠️ Les couleurs de MARQUE des services ne tiennent pas en texte : le vert de
+   WhatsApp donne 1,87:1 sur le fond des cartes, et notre sky 2,47:1. Les icônes,
+   elles, gardent la couleur exacte du service — c'est là qu'elle est reconnue.
+   Ratios après correction : 4,73 · 4,87. */
+.ms-contact-channel--whatsapp .ms-contact-channel__cta { color: #1A7F4B; }
+.ms-contact-channel--email    .ms-contact-channel__cta { color: var(--ms-color-sky-dark); }
+.ms-contact-channel--phone    .ms-contact-channel__cta { color: var(--ms-color-navy); }
 </style>
