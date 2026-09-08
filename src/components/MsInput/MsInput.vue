@@ -41,7 +41,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
   color:        var(--ms-color-navy);
 }
 
-.ms-field__hint  { font-size: 11px; color: var(--ms-color-muted); }
+.ms-field__hint  { font-size: 11px; color: var(--ms-color-muted-strong); }
 .ms-field__error { font-size: 11px; color: var(--ms-color-error); }
 
 .ms-input {
@@ -57,7 +57,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
   width:         100%;
   transition:    border-color var(--ms-transition-base), box-shadow var(--ms-transition-base);
 }
-.ms-input::placeholder { color: var(--ms-color-muted); }
+.ms-input::placeholder { color: var(--ms-color-muted-strong); }
 .ms-input:focus {
   border-color: var(--ms-color-sky);
   box-shadow:   0 0 0 3px rgba(0, 170, 239, 0.15);

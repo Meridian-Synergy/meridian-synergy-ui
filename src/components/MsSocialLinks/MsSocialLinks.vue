@@ -127,7 +127,7 @@ withDefaults(defineProps<{
 /* Light variant — for use on white/light backgrounds */
 .ms-social-links--light .ms-social-link {
   border-color: var(--ms-color-border);
-  color: var(--ms-color-muted);
+  color: var(--ms-color-muted-strong);
 }
 .ms-social-links--light .ms-social-link:hover {
   color: var(--ms-color-navy);
